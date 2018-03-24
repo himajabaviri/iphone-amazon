@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.text.Utilities;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -156,7 +158,7 @@ public class IphoneSearchStepDefinition {
 			Thread.sleep(3000);
 			amazonUrl = driver.getCurrentUrl();
 			modelName = driver.findElement(By.id("productTitle")).getText();
-			if (driver.getPageSource().contains("Price:")) {
+			if (driver.findElement(By.id("dp-container")).getText().contains("Price:")) {
 				modelPrice = driver.findElement(By.id("priceblock_ourprice")).getText();
 			} else {
 				modelPrice = driver.findElement(By.xpath("//div[@id='olp_feature_div']/div/span/span")).getText();
@@ -186,6 +188,9 @@ public class IphoneSearchStepDefinition {
 	@When("^I print product information$")
 	public void i_print_product_information() throws Throwable {
 		try {
+			if(!assertValidation) {
+				System.out.println("Selected Iphone product is greater than £1000 / $1000");
+			}
 			System.out.println("Selected iPhone Model is " + modelName);
 			System.out.println("Price of the product is " + modelPrice);
 			System.out.println("Clicked URL is " + amazonUrl);
@@ -197,7 +202,7 @@ public class IphoneSearchStepDefinition {
 
 	@Then("^I close the browser$")
 	public void i_close_the_browser() throws Throwable {
-		Thread.sleep(3000);
+		Thread.sleep(2000);
 		driver.close();
 	}
 
