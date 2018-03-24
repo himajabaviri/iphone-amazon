@@ -41,7 +41,7 @@ public class IphoneSearchStepDefinition {
 	String previousUrl = "";
 
 	@Given("^I navigate to google website$")
-	public void i_navigate_to_google_website() {
+	public void i_navigate_to_google_website() throws Throwable {
 		System.setProperty("webdriver.chrome.driver", "C:\\Himaja\\chromedriver_win32\\chromedriver.exe");
 		driver = new ChromeDriver();
 		driver.manage().window().maximize();
@@ -51,19 +51,19 @@ public class IphoneSearchStepDefinition {
 	}
 
 	@When("^I search iphone$")
-	public void i_search_iphone() {
+	public void i_search_iphone() throws Throwable {
 		driver.findElement(By.id("lst-ib")).sendKeys("iPhone");
 		driver.findElement(By.name("btnK")).submit();
 	}
 
 	@Then("^I see list of suggestions$")
-	public void i_see_list_of_suggestions() {
+	public void i_see_list_of_suggestions() throws Throwable {
 		String title = driver.getTitle();
 		title.equals("iPhone - Google Search");
 	}
 
 	@When("^I search for amazon in suggestions$")
-	public void i_search_for_amazon_in_suggestions() {
+	public void i_search_for_amazon_in_suggestions() throws Throwable {
 		String pageSource = "";
 		myAction = new Actions(driver);
 		boolean status = true;
@@ -75,7 +75,7 @@ public class IphoneSearchStepDefinition {
 			} else {
 				myAction.keyDown(Keys.CONTROL).sendKeys(Keys.END).keyUp(Keys.CONTROL).build().perform();
 				myWait.until(ExpectedConditions.elementToBeClickable(By.id("pnnext")));
-				//driver.findElement(By.xpath("//span[contains(text(),'Next')]")).click();
+				// driver.findElement(By.xpath("//span[contains(text(),'Next')]")).click();
 				driver.findElement(By.linkText("Next")).click();
 				// driver.findElement(By.id("pnnext")).click();
 			}
@@ -83,12 +83,12 @@ public class IphoneSearchStepDefinition {
 	}
 
 	@When("^I click on it$")
-	public void i_click_on_it() {
+	public void i_click_on_it() throws Throwable {
 		driver.findElement(By.xpath("//a[contains(text(),'Amazon')]")).click();
 	}
 
 	@Then("^I check if the product is iPhone smartPhone$")
-	public void i_check_if_the_product_is_iPhone_smartPhone() {
+	public void i_check_if_the_product_is_iPhone_smartPhone() throws Throwable {
 		storageList = new ArrayList<WebElement>();
 		boolean found = driver.findElement(By.id("dp-container")).getText().contains("Size Name");
 		if (!found) {
@@ -126,9 +126,16 @@ public class IphoneSearchStepDefinition {
 		};
 		myWait.until(expCond);
 		amazonUrl = driver.getCurrentUrl();
-		System.out.println("amzonUrl"+amazonUrl);
+		System.out.println("amzonUrl" + amazonUrl);
 		modelName = driver.findElement(By.id("productTitle")).getText();
 		modelPrice = driver.findElement(By.id("priceblock_ourprice")).getText();
+	}
+
+	@Then("^I assert the price of the product$")
+	public void i_assert_the_price_of_the_product() throws Throwable {
+		String price = modelPrice.substring(1);
+		boolean assertValidation = Float.parseFloat(price) < 1000.0f;
+		org.junit.Assert.assertEquals(true, assertValidation);
 	}
 
 	@When("^I print product information$")
