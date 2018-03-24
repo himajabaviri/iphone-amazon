@@ -116,19 +116,24 @@ public class IphoneSearchStepDefinition {
 		}
 		highestMemoryElement.click();
 
-		myWait = new WebDriverWait(driver, 20);
+		myWait = new WebDriverWait(driver, 45);
 		previousUrl = driver.getCurrentUrl();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-		ExpectedCondition expCond = new ExpectedCondition<Boolean>() {
+		ExpectedCondition<Boolean> expCond = new ExpectedCondition<Boolean>() {
 			public Boolean apply(WebDriver d) {
 				return (d.getCurrentUrl() != previousUrl);
+
 			}
 		};
 		myWait.until(expCond);
+		Thread.sleep(3000);
 		amazonUrl = driver.getCurrentUrl();
-		System.out.println("amzonUrl" + amazonUrl);
 		modelName = driver.findElement(By.id("productTitle")).getText();
-		modelPrice = driver.findElement(By.id("priceblock_ourprice")).getText();
+		if ( driver.getPageSource().contains("Price:") ) {
+			modelPrice = driver.findElement(By.id("priceblock_ourprice")).getText();
+		} else {
+			modelPrice = driver.findElement(By.xpath("//div[@id='olp_feature_div']/div/span/span")).getText();
+		}
 	}
 
 	@Then("^I assert the price of the product$")
