@@ -45,7 +45,8 @@ public class IphoneSearchStepDefinition {
 
 	@Given("^I navigate to google website$")
 	public void i_navigate_to_google_website() throws Throwable {
-		System.setProperty("webdriver.chrome.driver", "C:\\Himaja\\chromedriver_win32\\chromedriver.exe");
+		String webDriverValue = System.getProperty("user.dir") + "/drivers/chromedriver.exe";
+		System.setProperty("webdriver.chrome.driver",webDriverValue );
 		driver = new ChromeDriver();
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS); // to achieve page synchronisation
@@ -158,10 +159,12 @@ public class IphoneSearchStepDefinition {
 			Thread.sleep(3000);
 			amazonUrl = driver.getCurrentUrl();
 			modelName = driver.findElement(By.id("productTitle")).getText();
-			if (driver.findElement(By.id("dp-container")).getText().contains("Price:")) {
-				modelPrice = driver.findElement(By.id("priceblock_ourprice")).getText();
+			Boolean isPresent = driver.findElements(By.id("priceblock_ourprice")).size() > 0;
+			Boolean isPriceExists = driver.findElements(By.xpath("//div[@id='olp_feature_div']/div/span/span")).size() > 0;
+			if (driver.findElement(By.id("dp-container")).getText().contains("Price:")) {				
+				modelPrice = isPresent ? driver.findElement(By.id("priceblock_ourprice")).getText() : "Price Not Found!!";
 			} else {
-				modelPrice = driver.findElement(By.xpath("//div[@id='olp_feature_div']/div/span/span")).getText();
+				modelPrice = isPriceExists ? driver.findElement(By.xpath("//div[@id='olp_feature_div']/div/span/span")).getText() : "Price Not Found!!";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
